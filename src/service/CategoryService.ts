@@ -1,10 +1,11 @@
 import { AppResponse } from "../utils/AppResponse";
-import { Category } from "@prisma/client";
+import { Book, Category } from "@prisma/client";
 
 type categoryRepositoriesType = {
     findAll: () => Promise<Category[]>
     findByName: (name: string) => Promise<Category | null>
     findById: (id: string) => Promise<Category | null>
+    findByBook: (id: string) => Promise<{ books: Book[] } | null>
     create: (name: string) => Promise<Category>
     update: (name: string, id: string) => Promise<Category>
     delete: (id: string) => Promise<Category>
@@ -14,7 +15,7 @@ class CategoryService {
     categoryRepository: categoryRepositoriesType;
 
     constructor(categoryRepository: categoryRepositoriesType) {
-        this.categoryRepository = categoryRepository
+        this.categoryRepository = categoryRepository;
     }
 
     async create(name: string) {
@@ -65,7 +66,14 @@ class CategoryService {
         try {
             const categoryExists = await this.categoryRepository.findById(categoryId);
 
-            if (!categoryExists) return AppResponse("Categoria não existe!", 400);
+            if (!categoryExists) return AppResponse("Categoria não existe!", 404);
+
+            const booksInCategory = await this.categoryRepository.findByBook(categoryId);
+
+            if (booksInCategory?.books.length) {
+                console.log(booksInCategory)
+                return AppResponse("Ainda há livros pertencente à essa categoria!", 400)
+            }
 
             const category = await this.categoryRepository.delete(categoryId);
 

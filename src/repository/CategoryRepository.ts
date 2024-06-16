@@ -13,6 +13,10 @@ class CategoryRepository {
         return await prisma.category.findUnique({ where: { id } });
     }
 
+    static async findByBook(id: string) {
+        return await prisma.category.findFirst({ where: { id }, select: { books: true } })
+    }
+
     static async create(name: string) {
         return await prisma.category.create({ data: { name } });
     }
@@ -24,6 +28,7 @@ class CategoryRepository {
     static async delete(id: string) {
         return await prisma.category.delete({ where: { id } })
     }
+
 }
 
 export { CategoryRepository }
