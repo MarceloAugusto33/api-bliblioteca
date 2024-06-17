@@ -2,13 +2,13 @@ import { AppResponse } from "../utils/AppResponse";
 import { Book, Category } from "@prisma/client";
 
 type categoryRepositoriesType = {
-    findAll: () => Promise<Category[]>
-    findByName: (name: string) => Promise<Category | null>
-    findById: (id: string) => Promise<Category | null>
-    findByBook: (id: string) => Promise<{ books: Book[] } | null>
-    create: (name: string) => Promise<Category>
-    update: (name: string, id: string) => Promise<Category>
-    delete: (id: string) => Promise<Category>
+    findAll: () => Promise<any>
+    findByName: (name: string) => Promise<any>
+    findById: (id: string) => Promise<any>
+    findByBook: (id: string) => Promise<any>
+    create: (name: string) => Promise<any>
+    update: (name: string, id: string) => Promise<any>
+    delete: (id: string) => Promise<any>
 }
 
 class CategoryService {
@@ -70,10 +70,7 @@ class CategoryService {
 
             const booksInCategory = await this.categoryRepository.findByBook(categoryId);
 
-            if (booksInCategory?.books.length) {
-                console.log(booksInCategory)
-                return AppResponse("Ainda há livros pertencente à essa categoria!", 400)
-            }
+            if (booksInCategory?.books.length) return AppResponse("Ainda há livros pertencente à essa categoria!", 400);
 
             const category = await this.categoryRepository.delete(categoryId);
 
